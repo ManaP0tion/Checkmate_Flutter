@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pp/homePage/home_page.dart';
-import 'package:pp/startPage/start_page.dart';
-import 'package:pp/qr_scan_page.dart';
+import 'package:pp/pages/home_page.dart';
+import 'package:pp/pages/start_page.dart';
+import 'package:pp/pages/scan_qr_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: HomePage(),
+          home: StartPage(),
         );
       },
     );

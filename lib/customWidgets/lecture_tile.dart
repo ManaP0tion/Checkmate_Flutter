@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
-import 'package:pp/qr_scan_page.dart';
-
-class Lecture{
-  String name;
-  String division;
-
-  Lecture({required this.name, required this.division});
-}
+import 'package:pp/pages/scan_ble_page.dart';
+import 'package:pp/pages/show_qr_page.dart';
+import 'package:pp/models/lecture.dart';
 
 class LectureTile extends StatelessWidget {
   final Lecture lecture;
@@ -35,9 +30,9 @@ class LectureTile extends StatelessWidget {
                   children: [
                     ElevatedButton(
                         onPressed: isProfessor ? () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => QrScanPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQrPage(lecture: lecture)));
                         }: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => QrScanPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage()));
                         },
                         child: isProfessor? Text("출석시작", style: mediumWhite14) : Text("출석하기", style: mediumWhite14),
                         style: TextButton.styleFrom(

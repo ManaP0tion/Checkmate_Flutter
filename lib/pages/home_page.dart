@@ -2,22 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
-import 'package:pp/homePage/lecture_tile.dart';
-
-class User{
-  String name;
-  String studentId;
-  String major;
-  String userType;
-
-  User({required this.name, required this.studentId, required this.major, required this.userType});
-}
+import 'package:pp/customWidgets/lecture_tile.dart';
+import 'package:pp/models/lecture.dart';
+import 'package:pp/models/user.dart';
 
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
   // 테스트용
-  static User user = User(name: "김교수", studentId: "2021041076", major: "소프트웨어학부", userType: "교수자");
+  static User user = User(name: "김교수", studentId: "2021041076", major: "소프트웨어학부", userType: "학생");
   static List<Lecture> lectures = [Lecture(name: '데이터 사이언스', division: '01'), Lecture(name: '임베디스 시스템', division: '01'), Lecture(name: '캡스톤 디자인', division: '02'), Lecture(name: '컴퓨터 비전', division: '01'), Lecture(name: '클라우드 컴퓨팅 ', division: '01'),];
   final isProfessor = (user.userType=='교수자');
 
@@ -29,7 +22,7 @@ class HomePage extends StatelessWidget {
         title: Text('체크메이트', style: boldWhite18),
         backgroundColor: blue,
         surfaceTintColor: Colors.transparent,
-        titleSpacing: 20,
+        titleSpacing: 0,
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: white, size: 24),

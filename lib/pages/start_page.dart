@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pp/startPage/custom_text_field.dart';
+import 'package:pp/customWidgets//custom_text_field.dart';
+import 'package:pp/pages/register_page.dart';
+import 'package:pp/pages/home_page.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
 
 class StartPage extends StatefulWidget {
   StartPage({super.key});
 
-  final idController = TextEditingController();
-  final passwordController = TextEditingController();
-
   @override
   State<StartPage> createState() => _StartPageState();
 }
 
 class _StartPageState extends State<StartPage> {
+  final _idController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose(){
+    _idController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,13 +39,13 @@ class _StartPageState extends State<StartPage> {
                   Text("CHECKMATE", style: boldBlack36),
                   SizedBox(height: 28.h),
                   CustomTextField(
-                    controller: widget.idController,
+                    controller: _idController,
                     name: '학번을 입력해주세요',
                     inputType: TextInputType.text,
                   ),
                   SizedBox(height: 8.h),
                   CustomTextField(
-                    controller: widget.passwordController,
+                    controller: _passwordController,
                     name: '비밀번호를 입력해주세요',
                     obscureText: true,
                     inputType: TextInputType.visiblePassword
@@ -47,7 +56,10 @@ class _StartPageState extends State<StartPage> {
                     height: 41.h,
                     child: ElevatedButton(
                       onPressed: () {
-                        print("Login Button clicked!");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
                       },
                       style: btnBlueRound15,
                       child: Text("로그인", style: mediumWhite16),
@@ -57,7 +69,10 @@ class _StartPageState extends State<StartPage> {
                   InkWell(
                     child: Text('회원가입', style: boldBlack16.copyWith(fontSize: 14.sp, color: blue)),
                     onTap: () {
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
                     },
                   )
                 ]
