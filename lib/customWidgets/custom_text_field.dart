@@ -30,10 +30,10 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: inputType,
       textAlign: TextAlign.start,
-      style: mediumBlack13,
+      style: mediumBlack14,
       decoration: InputDecoration(
         isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         labelText: name,
         counterText: "",
         labelStyle: mediumGrey13,

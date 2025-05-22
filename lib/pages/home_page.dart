@@ -5,12 +5,13 @@ import 'package:pp/themes/colors.dart';
 import 'package:pp/customWidgets/lecture_tile.dart';
 import 'package:pp/models/lecture.dart';
 import 'package:pp/models/user.dart';
+import 'package:pp/customWidgets/custom_alert_dialog_confirm.dart';
 
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
   // 테스트용
-  static User user = User(name: "김교수", studentId: "2021041076", major: "소프트웨어학부", userType: "학생");
+  static User user = User(name: "김교수", studentId: "2021041076", major: "소프트웨어학부", userType: "교수자");
   static List<Lecture> lectures = [Lecture(name: '데이터 사이언스', division: '01'), Lecture(name: '임베디스 시스템', division: '01'), Lecture(name: '캡스톤 디자인', division: '02'), Lecture(name: '컴퓨터 비전', division: '01'), Lecture(name: '클라우드 컴퓨팅 ', division: '01'),];
   final isProfessor = (user.userType=='교수자');
 
@@ -20,13 +21,16 @@ class HomePage extends StatelessWidget {
       backgroundColor: background,
       appBar: AppBar(
         title: Text('체크메이트', style: boldWhite18),
+        leading: SizedBox.shrink(),
+        leadingWidth: 8.w,
         backgroundColor: blue,
         surfaceTintColor: Colors.transparent,
-        titleSpacing: 0,
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: white, size: 24),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(context: context, builder: (BuildContext context) => CustomAlertDialogConfirm(), barrierDismissible: false);
+            },
           )
         ]
       ),
@@ -40,7 +44,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                   width: 360.w,
-                  height: 110.h,
+                  height: 100.h,
                   color: blue),
                 Positioned(
                   top: 20.h,
@@ -53,7 +57,7 @@ class HomePage extends StatelessWidget {
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: grey_seperating_line, width: 1.0)),
                       child: Padding(
-                        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 14.h, bottom: 14.h),
+                        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 14.h, bottom: 16.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -67,17 +71,6 @@ class HomePage extends StatelessWidget {
                             Text(user.name, style: boldBlack16),
                             SizedBox(height: 2.h),
                             Text("${user.major} | ${user.studentId}", style: mediumBlack14),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: btnBlueRound15,
-                                onPressed: () {
-                                  print("Login Button clicked!");
-                                },
-                                child: Text("로그아웃", style: mediumWhite14),
-                              ),
-                            )
                           ]
                         ),
                       )
@@ -87,7 +80,7 @@ class HomePage extends StatelessWidget {
               ]
             ),
             SizedBox(
-              height: 90.h
+              height: 48.h
             ),
             Expanded(
               child: Padding(
@@ -99,19 +92,19 @@ class HomePage extends StatelessWidget {
                     SizedBox(height: 4.h),
                     Expanded(
                       child: Card(
-                        color: white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: grey_seperating_line, width: 1.0)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 16.w, right: 16.w),
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) => Divider(color: grey_seperating_line, height: 1),
-                            itemCount: lectures.length,
-                            itemBuilder: (context, index) {
-                              return LectureTile(isProfessor: isProfessor, lecture: lectures[index]);
-                            },
+                          color: white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: grey_seperating_line, width: 1.0)),
+                          child: Padding(
+                              padding: EdgeInsets.only(left: 16.w, right: 16.w),
+                              child: ListView.separated(
+                                separatorBuilder: (context, index) => Divider(color: grey_seperating_line, height: 1),
+                                itemCount: lectures.length,
+                                itemBuilder: (context, index) {
+                                  return LectureTile(isProfessor: isProfessor, lecture: lectures[index]);
+                                },
+                              )
                           )
-                        )
                       ),
                     )
                   ]

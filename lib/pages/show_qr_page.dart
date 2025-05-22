@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pp/pages/home_page.dart';
 import 'package:pp/themes/colors.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/models/lecture.dart';
@@ -27,7 +28,8 @@ class ShowQrPage extends StatelessWidget {
               Container(
                 width: 200.w,
                 height: 200.h,
-                color: grey
+                color: grey,
+                //child:
               ),
               SizedBox(height: 10.h),
               Text("${lecture.name} ${lecture.division}분반", style: boldBlack16)
@@ -41,7 +43,7 @@ class ShowQrPage extends StatelessWidget {
           height: 41.h,
           child: ElevatedButton(
             onPressed: () {
-              print("Register Button clicked!");
+              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
             },
             style: btnBlueRound15,
             child: Text("종료하기", style: mediumWhite16),
