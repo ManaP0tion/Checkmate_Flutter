@@ -4,6 +4,8 @@ import 'package:pp/pages/attendance_history_page_professor.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
 import 'package:pp/pages/scan_ble_page.dart';
+import 'package:pp/pages/scan_qr_page.dart';
+import 'package:pp/pages/scan_ble_page.dart';
 import 'package:pp/pages/show_qr_page.dart';
 import 'package:pp/models/lecture.dart';
 
@@ -31,10 +33,9 @@ class LectureTile extends StatelessWidget {
                   children: [
                     ElevatedButton(
                         onPressed: isProfessor ? () {
-                          print('왜 안되냐');
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQrPage(lecture: lecture)));
                         }: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage(lecture: lecture)));
                         },
                         child: isProfessor? Text("출석시작", style: mediumWhite14) : Text("출석하기", style: mediumWhite14),
                         style: TextButton.styleFrom(

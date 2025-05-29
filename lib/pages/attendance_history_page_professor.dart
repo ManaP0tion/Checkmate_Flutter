@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:pp/models/lecture.dart';
 
 // 학생리스트, 수동출결

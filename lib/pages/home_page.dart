@@ -6,13 +6,14 @@ import 'package:pp/customWidgets/lecture_tile.dart';
 import 'package:pp/models/lecture.dart';
 import 'package:pp/models/user.dart';
 import 'package:pp/customWidgets/custom_alert_dialog_confirm.dart';
+import 'package:uuid/uuid.dart';
 
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
   // 테스트용
-  static User user = User(name: "김교수", studentId: "2021041076", major: "소프트웨어학부", userType: "교수자");
-  static List<Lecture> lectures = [Lecture(name: '데이터 사이언스', division: '01'), Lecture(name: '임베디스 시스템', division: '01'), Lecture(name: '캡스톤 디자인', division: '02'), Lecture(name: '컴퓨터 비전', division: '01'), Lecture(name: '클라우드 컴퓨팅 ', division: '01'),];
+  static User user = User(name: "김교수", studentId: "2021041076", major: "소프트웨어학부", userType: "학생");
+  static List<Lecture> lectures = [Lecture(name: '데이터 사이언스', division: '01', bleUUID: Uuid().v4()), Lecture(name: '임베디스 시스템', division: '01', bleUUID: Uuid().v4()), Lecture(name: '캡스톤 디자인', division: '02', bleUUID: Uuid().v4()), Lecture(name: '컴퓨터 비전', division: '01', bleUUID: Uuid().v4()), Lecture(name: '클라우드 컴퓨팅 ', division: '01', bleUUID: Uuid().v4()),];
   final isProfessor = (user.userType=='교수자');
 
   @override

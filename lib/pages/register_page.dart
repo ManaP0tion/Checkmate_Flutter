@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/customWidgets/custom_text_field.dart';
-import 'package:pp/pages/start_page.dart';
-import 'package:pp/models/user.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
 
@@ -19,7 +17,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _passwordCheckController = TextEditingController();
   final _majorController = TextEditingController();
-  String _selectedUserType = '학생';
 
   @override
   void dispose(){
@@ -55,68 +52,31 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('사용자 타입', style: mediumBlack16),
-                SizedBox(height: 6.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: RadioListTile(
-                        title: Text('학생', style: mediumBlack14),
-                        value: '학생',
-                        groupValue: _selectedUserType,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _selectedUserType = value!;
-                          });
-                        },
-                        activeColor: blue,
-                        visualDensity: VisualDensity(horizontal: -4)
-                      ),
-                    ),
-                    Expanded(
-                      child: RadioListTile(
-                        title: Text('교수자', style: mediumBlack14),
-                        value: '교수자',
-                        groupValue: _selectedUserType,
-                        onChanged: (String? value){
-                          setState(() {
-                            _selectedUserType = value!;
-                          });
-                        },
-                        activeColor: blue,
-                        visualDensity: VisualDensity(horizontal: -4),
-                      ),
-                    ),
-                    SizedBox(width: 50.w)
-                  ]
-                ),
-                SizedBox(height: 24.h),
-                Text('이름', style: mediumBlack16),
+                Text('이름', style: mediumBlack14),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   controller: _nameController,
                   name: '이름을 입력해주세요',
-                  inputType: TextInputType.visiblePassword,
+                  inputType: TextInputType.text,
                 ),
                 SizedBox(height: 24.h),
-                Text('소속', style: mediumBlack16),
+                Text('소속', style: mediumBlack14),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   controller: _majorController,
                   name: '소속을 입력해주세요',
-                  inputType: TextInputType.visiblePassword,
+                  inputType: TextInputType.text,
                 ),
                 SizedBox(height: 24.h),
-                Text('학번', style: mediumBlack16),
+                Text('학번', style: mediumBlack14),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   controller: _idController,
                   name: '학번을 입력해주세요',
-                  inputType: TextInputType.visiblePassword,
+                  inputType: TextInputType.text,
                 ),
                 SizedBox(height: 24.h),
-                Text('비밀번호', style: mediumBlack16),
+                Text('비밀번호', style: mediumBlack14),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   controller: _passwordController,
@@ -125,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   inputType: TextInputType.visiblePassword,
                 ),
                 SizedBox(height: 24.h),
-                Text('비밀번호 확인', style: mediumBlack16),
+                Text('비밀번호 확인', style: mediumBlack14),
                 SizedBox(height: 6.h),
                 CustomTextField(
                   controller: _passwordCheckController,
@@ -133,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: true,
                   inputType: TextInputType.visiblePassword,
                 ),
-                SizedBox(height: 64.h),
+                SizedBox(height: 24.h),
               ]
             ),
       )
@@ -142,18 +102,10 @@ class _RegisterPageState extends State<RegisterPage> {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(left: 24.w, right: 24.w, bottom: 24.h),
         child: SizedBox(
-          height: 42.h,
+          height: 41.h,
           child: ElevatedButton(
             onPressed: () {
-              User(
-                name: _nameController.text,
-                userType: _selectedUserType,
-                major: _majorController.text,
-                studentId: _idController.text
-              );
-              Navigator.push(
-                context, MaterialPageRoute(builder: (context) => StartPage())
-              );
+              print("Register Button clicked!");
             },
             style: btnBlueRound15,
             child: Text("회원가입", style: mediumWhite16),
