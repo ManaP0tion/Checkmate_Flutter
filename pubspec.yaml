@@ -28,6 +28,8 @@ dependencies:
   flutter_screenutil: 5.9.3
   qr_code_scanner_plus: ^2.0.10+1
   lottie: ^3.3.1
+  syncfusion_flutter_datagrid: ^29.2.7+1
+  dropdown_button2: ^2.3.9
 
 
   # The following adds the Cupertino Icons font to your application.

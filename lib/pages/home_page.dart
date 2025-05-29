@@ -20,14 +20,14 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
-        title: Text('체크메이트', style: boldWhite18),
+        title: Text('체크메이트', style: boldBlack18),
         leading: SizedBox.shrink(),
         leadingWidth: 8.w,
-        backgroundColor: blue,
+        backgroundColor: background,
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: white, size: 24),
+            icon: Icon(Icons.settings, color: black, size: 24),
             onPressed: () {
               showDialog(context: context, builder: (BuildContext context) => CustomAlertDialogConfirm(), barrierDismissible: false);
             },
@@ -39,48 +39,37 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 360.w,
-                  height: 100.h,
-                  color: blue),
-                Positioned(
-                  top: 20.h,
-                  left: 0.w,
-                  right: 0.w,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: SizedBox(
+                width: double.infinity,
+                child: Card(
+                  color: white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: grey_seperating_line, width: 1.0)),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Card(
-                      color: white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: grey_seperating_line, width: 1.0)),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 14.h, bottom: 16.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 52.w,
-                              height: 22.h,
-                              decoration: BoxDecoration(color: blue_light, borderRadius: BorderRadius.circular(10.0)),
-                              child: Center(child: Text(user.userType, style: mediumBlue13))
-                            ),
-                            SizedBox(height: 6.h),
-                            Text(user.name, style: boldBlack16),
-                            SizedBox(height: 2.h),
-                            Text("${user.major} | ${user.studentId}", style: mediumBlack14),
-                          ]
+                    padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 14.h, bottom: 16.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 52.w,
+                          height: 22.h,
+                          decoration: BoxDecoration(color: blue_light, borderRadius: BorderRadius.circular(10.0)),
+                          child: Center(child: Text(user.userType, style: mediumBlue13))
                         ),
-                      )
-                    )
+                        SizedBox(height: 6.h),
+                        Text(user.name, style: boldBlack16),
+                        SizedBox(height: 2.h),
+                        Text("${user.major} | ${user.studentId}", style: mediumBlack14),
+                      ]
+                    ),
                   )
-                )
-              ]
+                ),
+              )
             ),
             SizedBox(
-              height: 48.h
+              height: 32.h
             ),
             Expanded(
               child: Padding(

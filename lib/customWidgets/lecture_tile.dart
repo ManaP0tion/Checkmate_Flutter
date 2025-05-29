@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pp/pages/attendance_history_page_professor.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
 import 'package:pp/pages/scan_ble_page.dart';
@@ -30,6 +31,7 @@ class LectureTile extends StatelessWidget {
                   children: [
                     ElevatedButton(
                         onPressed: isProfessor ? () {
+                          print('왜 안되냐');
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQrPage(lecture: lecture)));
                         }: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage()));
@@ -45,7 +47,13 @@ class LectureTile extends StatelessWidget {
                     ),
                     SizedBox(width: 10.w),
                     ElevatedButton(
-                        onPressed: () {print("출석기록 버튼 클릭됨");},
+                        onPressed: () {
+                          if(isProfessor){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>AttendacneHistoryProfessorPage(week: 10, lecture: lecture)));
+                          }else{
+                            print('dfjdijfiejfe');
+                          }
+                        },
                         child: Text("출석기록", style: mediumBlue14),
                         style: TextButton.styleFrom(
                             backgroundColor: blue_light,
