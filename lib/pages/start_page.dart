@@ -83,7 +83,7 @@ class _StartPageState extends State<StartPage> {
                   CustomTextField(
                     controller: _idController,
                     name: '학번을 입력해주세요',
-                    inputType: TextInputType.visiblePassword,
+                    inputType: TextInputType.text,
                   ),
                   SizedBox(height: 8.h),
                   CustomTextField(
@@ -95,7 +95,7 @@ class _StartPageState extends State<StartPage> {
                   SizedBox(height: 16.h),
                   SizedBox(
                     width: double.infinity,
-                    height: 42.h,
+                    height: 41.h,
                     child: ElevatedButton(
                       onPressed: login,
                       style: btnBlueRound15,
