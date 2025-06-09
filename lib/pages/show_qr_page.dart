@@ -58,7 +58,7 @@ class _ShowQrPageState extends State<ShowQrPage> {
         'Content-Type' : 'application/json'
       },
       body: jsonEncode({
-        'lecture' : widget.lecture.id,
+        'lecture_code' : widget.lecture.code,
         'week' : widget.week
       })
     );
@@ -71,6 +71,10 @@ class _ShowQrPageState extends State<ShowQrPage> {
 
     } else if (response.statusCode == 207){
       print('라즈베리파이 연결 실패');
+      final data = jsonDecode(response.body);
+      final session= data['session'];
+      sessionId = session['id'];
+      print(sessionId);
     } else {
       print('세션 연결 실패');
     }
@@ -84,7 +88,7 @@ class _ShowQrPageState extends State<ShowQrPage> {
         'Content-Type' : 'application/json'
       },
       body: jsonEncode({
-        'session_id' : sessionId
+        'session_id' : '${widget.lecture.code}_${widget.week}'
       })
     );
     if(response.statusCode == 200) {

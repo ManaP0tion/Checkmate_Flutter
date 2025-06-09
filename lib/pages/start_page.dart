@@ -10,6 +10,7 @@ import 'package:pp/themes/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pp/themes/strings.dart';
+import 'package:pp/pages/scan_qr_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -54,6 +55,7 @@ class _StartPageState extends State<StartPage> {
       await saveAccessToken(accessToken);
       //Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage(lectureCode: 'CS101', week: 1)));
       Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => QrScanPage(lectureCode: 'CS101', week: 2, sessionIdBle: 'CS101_2')));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content : Text('로그인 실패. 아이디와 비밀번호를 확인하세요.', style: mediumWhite14))

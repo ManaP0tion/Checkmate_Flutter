@@ -244,6 +244,12 @@ class _ScanBlePageState extends State<ScanBlePage> {
     print('으악1');
   }
 
+  @override
+  void dispose() {
+    FlutterBluePlus.stopScan(); // BLE 스캔 중지
+    super.dispose();
+  }
+
   Future<void> _initialize() async {
     _token = await getToken();
     print('으악악');

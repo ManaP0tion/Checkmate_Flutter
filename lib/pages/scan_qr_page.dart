@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class QrScanPage extends StatefulWidget {
   final LectureStudent lecture;
+  //final String lectureCode;
   final int week;
   final String sessionIdBle;
   QrScanPage({super.key, required this.lecture, required this.week, required this.sessionIdBle});
@@ -41,28 +42,26 @@ class _QrScanPageState extends State<QrScanPage> {
     setState(() {
       _token = token;
     });
-    await submitQr();
   }
 
-  void _onQRViewCreated(QRViewController controller){
+  Future<void> _onQRViewCreated(QRViewController controller) async {
     this.controller = controller;
 
     initTokenAndQrScan().then((_) {
       controller.scannedDataStream.listen((scanData) {
-        setState(() {
-          qrText = scanData.code;
-          controller.pauseCamera();
+        qrText = scanData.code;
+        print(qrText);
+        controller.pauseCamera();
 
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => CustomAlertDialogConfirm(
-              title: attendance_dialog_title,
-              subtitle: attendance_dialog_subtitle,
-            ),
-          );
-
+        if(qrText == widget.sessionIdBle){
+          print('판단 성공');
           submitQr();
-        });
+        } else {
+          print('QR 인증 실패!');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('QR 인증에 실패하였습니다.', style: mediumWhite14)),
+          );
+        }
       });
     });
   }
@@ -74,9 +73,9 @@ class _QrScanPageState extends State<QrScanPage> {
         'Authorization' : 'Bearer ${_token}',
         'Content-Type' : 'application/json'
       },
-      body: {
+      body: jsonEncode({
         'session_id' : widget.sessionIdBle
-      }
+      })
     );
 
     if(response.statusCode == 200){
@@ -86,21 +85,20 @@ class _QrScanPageState extends State<QrScanPage> {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content : Text('Qr 인증 실패. 세션을 찾을 수 없습니다.', style: mediumWhite14))
       );
-      Navigator.pop(context);
     }
   }
 
   Future<void> submitAttendance() async {
     final response = await http.post(
-      Uri.parse('http://${ipHome}/api/attendance/attendance/submit'),
+      Uri.parse('http://${ipHome}/api/attendance/attendance/submit/'),
       headers: {
         'Authorization' : 'Bearer ${_token}',
         'Content-Type' : 'application/json'
       },
-      body: {
+      body: jsonEncode({
         'session_code' : widget.sessionIdBle,
-        'status' : 0
-      }
+        'status' : 'present'
+      })
     );
 
     if(response.statusCode == 200) {
