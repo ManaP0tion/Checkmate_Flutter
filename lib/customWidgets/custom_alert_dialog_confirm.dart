@@ -5,7 +5,9 @@ import 'package:pp/themes/colors.dart';
 import 'package:pp/pages/home_page.dart';
 
 class CustomAlertDialogConfirm extends StatelessWidget {
-  const CustomAlertDialogConfirm({super.key});
+  String title = '';
+  String subtitle = '';
+  CustomAlertDialogConfirm({super.key, required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,12 @@ class CustomAlertDialogConfirm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('정상적으로 출석처리 되었습니다', style: mediumBlack16),
+            Text(title, style: mediumBlack16),
+            Text(subtitle, style: mediumGrey13),
             SizedBox(height: 12.h),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+                Navigator.pop(context);
               },
               child: Text('확인', style: mediumWhite14),
               style: btnBlueRound15

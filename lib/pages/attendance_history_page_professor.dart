@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:pp/models/lecture.dart';
+import 'package:pp/load_user_data.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:pp/themes/strings.dart';
 
-// 학생리스트, 수동출결
+// 학생리스트, 수동출결, WeeklyAttendanceView, MyLectureListView
 
 class AttendacneHistoryProfessorPage extends StatefulWidget {
   final int week;
@@ -20,105 +23,147 @@ class AttendacneHistoryProfessorPage extends StatefulWidget {
 class _AttendacneHistoryProfessorPageState extends State<AttendacneHistoryProfessorPage> {
   List<Map<String, dynamic>> students = []; // 학생 정보 리스트
   Map<int, String> statusMap = {}; // student_id -> status
+  Set<int> modifiedIds = {};
+  String? _token;
+  Map<int, String> idToUsername = {};
+
+  //임시
+  String _sessionId = "session_id";
+  int _classId = 0;
 
   @override
   void initState() {
     super.initState();
-    fetchStudentData(); // 예시용 더미 데이터 호출
+    initData(); // 예시용 더미 데이터 호출
   }
 
-  void fetchStudentData() async {
-    // 실제 API로 대체 가능
-    setState(() {
-      students = [
-        {
-          "student_id": 1,
-          "name": "홍길동",
-          "student_number": "20211234",
-          "major": "컴퓨터공학과",
-          "status": "출석"
-        },
-        {
-          "student_id": 2,
-          "name": "이영희",
-          "student_number": "20211235",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },
-        {
-          "student_id": 3,
-          "name": "박박박",
-          "student_number": "20211236",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },
-        {
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },
-        {
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },{
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },{
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },{
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },{
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },{
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },{
-          "student_id": 4,
-          "name": "김김김",
-          "student_number": "20211237",
-          "major": "소프트웨어공학과",
-          "status": "결석"
-        },
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+  }
 
+  Future<void> initData() async {
+    final token = await getToken();
+    if(token == null) {
+      print('no token');
+      return;
+    }
+    _token = token;
 
+    await fetchStudentUsernames();
+    await fetchStudentData();
+  }
 
-      ];
+  Future<void> fetchStudentData() async {
+    const String baseUrl = 'http://${ipHome}/api/attendance/weekly/';
+    final Map<String, String> queryParameters = {
+      'lecture_code' : widget.lecture.code!,
+      'week' : widget.week.toString(),
+    };
+    final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      // 초기 statusMap 설정
-      for (var student in students) {
-        statusMap[student["student_id"]] = student["status"];
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization' : 'Bearer $_token',
+          'Content-Type' : 'application/json'
+        }
+      );
+
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final List<dynamic> records = data['records'];
+
+        setState(() {
+          students = records.map<Map<String, dynamic>> ((record) {
+            return {
+              'student_id' : record['student_id'] ?? 'null',
+              'name' : record['student_name'] ?? 'null',
+              'status' : convertStatus(record['status'] ?? 'null')
+            };
+          }).toList();
+
+          for (var student in students) {
+            statusMap[student['student_id']] = student['status'];
+          }
+
+        });
+
+      } else {
+        print('실패');
       }
-    });
+    } catch (e) {
+      print('에러발생!! $e');
+    }
+
+  }
+
+  Future<void> fetchStudentUsernames() async {
+    const String baseUrl = 'http://${ipHome}/api/attendance/lectures/students/';
+    final uri = Uri.parse(baseUrl).replace(queryParameters: {'lecture_code' : widget.lecture.code!});
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization' : 'Bearer $_token',
+        'Content-Type' : 'application/json'
+      }
+    );
+
+    if(response.statusCode == 200){
+      final data = jsonDecode(response.body) as List;
+      for (var student in data) {
+        int id = student['id'];
+        String username = student['username'];
+        idToUsername[id] = username;
+      }
+    } else {
+      print('유저네임 불러오기 실패');
+    }
   }
 
   void submitAttendance() async {
+    List<Future> requests = [];
+
+    for(var student in students) {
+      int studentId = student['student_id'];
+      if(!modifiedIds.contains(studentId)) continue;
+
+      String status = reverseStatus(statusMap[studentId] ?? '');
+      String username = idToUsername[studentId] ?? '';
+
+      try{
+        final response = await http.post(
+          Uri.parse('http://${ipHome}/api/attendance/attendance/manual-update/'),
+          headers: {
+            'Authorization' : 'Bearer $_token',
+            'Content-Type' : 'application/json'
+          },
+          body: jsonEncode({
+            'lecture_code' : widget.lecture.code!,
+            'week' : widget.week,
+            'student_username' : username,
+            'status' : status
+          })
+        );
+        if (response.statusCode == 200){
+          print('저장 성공 : $studentId');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content : Text('저장 실패 : $studentId'))
+          );
+          return;
+        }
+      } catch (e) {
+        print('error : $e');
+      }
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("출석 정보 저장 완료")),
+      SnackBar(content: Text('출석 정보 저장 완료!'))
     );
+    modifiedIds.clear();
   }
 
   @override
@@ -126,38 +171,37 @@ class _AttendacneHistoryProfessorPageState extends State<AttendacneHistoryProfes
     return Scaffold(
       backgroundColor: white,
       appBar: AppBar(
-        title: Text('주차별 출결이력', style: mediumBlack16),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('주차별 출결이력', style: mediumBlack16),
+            Text('${widget.lecture.name} ${widget.week}주차', style: mediumGrey13)
+          ]
+        ),
         titleSpacing: 0,
         backgroundColor: white,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 과목, 분반, 주차 정보
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            child: Text("${widget.lecture.name} ${widget.lecture.division}분반 - ${widget.week}주차", style: boldBlack18),
-          ),
+          SizedBox(height: 10.h),
           // 테이블
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+            child: Container(
+              width: double.infinity,
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: DataTable(
                   dataRowHeight: 50.h,
                   columns: [
-                    DataColumn(label: Text("학번", style: boldBlack16)),
                     DataColumn(label: Text("이름", style: boldBlack16)),
-                    DataColumn(label: Text("전공", style: boldBlack16)),
                     DataColumn(label: Text("상태", style: boldBlack16)),
                   ],
                   rows: students.map((student) {
                     int id = student["student_id"];
                     return DataRow(cells: [
-                      DataCell(Text(student["student_number"], style: mediumBlack16)),
                       DataCell(Text(student["name"], style: mediumBlack16)),
-                      DataCell(Text(student["major"], style: mediumBlack16)),
                       DataCell(
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -172,6 +216,7 @@ class _AttendacneHistoryProfessorPageState extends State<AttendacneHistoryProfes
                             onChanged: (value) {
                               setState(() {
                                 statusMap[id] = value!;
+                                modifiedIds.add(id);
                               });
                             },
                             items: ["출석", "지각", "결석"]
@@ -218,5 +263,23 @@ Color getStatusColor(String? status) {
       return red_light;
     default:
       return Colors.grey;
+  }
+}
+
+String convertStatus(String status) {
+  switch (status) {
+    case 'present' : return '출석';
+    case 'late' : return '지각';
+    case 'absent' : return '결석';
+    default: return '결석';
+  }
+}
+
+String reverseStatus(String status){
+  switch (status) {
+    case '출석': return 'present';
+    case '지각': return 'late';
+    case '결석': return 'absent';
+    default: return 'absent';
   }
 }

@@ -1,13 +1,18 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/customWidgets//custom_text_field.dart';
 import 'package:pp/pages/register_page.dart';
 import 'package:pp/pages/home_page.dart';
+import 'package:pp/pages/scan_ble_page.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pp/themes/strings.dart';
 
 class StartPage extends StatefulWidget {
-  StartPage({super.key});
+  const StartPage({super.key});
 
   @override
   State<StartPage> createState() => _StartPageState();
@@ -22,6 +27,43 @@ class _StartPageState extends State<StartPage> {
     _idController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void login() async {
+    if(_idController.text.isEmpty || _passwordController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('빈 칸 없이 입력해주세요', style: mediumWhite14))
+      );
+      return;
+    }
+
+    final url = Uri.parse('http://${ipHome}/api/users/login/');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type' : 'application/json'},
+      body: jsonEncode({
+        'username' : _idController.text,
+        'password' : _passwordController.text
+      })
+    );
+
+    if (response.statusCode == 200){
+      final data = jsonDecode(response.body);
+      final accessToken = data['access'];
+
+      await saveAccessToken(accessToken);
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage(lectureCode: 'CS101', week: 1)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content : Text('로그인 실패. 아이디와 비밀번호를 확인하세요.', style: mediumWhite14))
+      );
+    }
+  }
+
+  Future<void> saveAccessToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', token);
   }
 
   @override
@@ -55,12 +97,7 @@ class _StartPageState extends State<StartPage> {
                     width: double.infinity,
                     height: 42.h,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      },
+                      onPressed: login,
                       style: btnBlueRound15,
                       child: Text("로그인", style: mediumWhite16),
                     ),

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/pages/attendance_history_page_professor.dart';
+import 'package:pp/pages/attendance_history_page_student.dart';
+import 'package:pp/pages/history_which_week.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
 import 'package:pp/pages/scan_ble_page.dart';
 import 'package:pp/pages/show_qr_page.dart';
 import 'package:pp/models/lecture.dart';
+import 'package:pp/pages/attendance_which_week.dart';
 
 class LectureTile extends StatelessWidget {
-  final Lecture lecture;
-  bool isProfessor;
-  LectureTile({super.key, required this.isProfessor, required this.lecture});
+  final Lecture? lecture;
+  final LectureStudent? lectureStudent;
+  final bool isProfessor;
+  LectureTile({super.key, required this.isProfessor, this.lecture, this.lectureStudent});
 
   @override
   Widget build(BuildContext context) {
@@ -21,20 +25,16 @@ class LectureTile extends StatelessWidget {
               SizedBox(height: 16.h),
               Row(
                   children: [
-                    Text(lecture.name, style: mediumBlack14),
+                    Text(isProfessor? lecture!.name : lectureStudent!.name, style: mediumBlack14),
                     SizedBox(width: 2.w),
-                    Text(lecture.division, style: mediumGrey14)
                   ]
               ),
               SizedBox(height: 3.h),
               Row(
                   children: [
                     ElevatedButton(
-                        onPressed: isProfessor ? () {
-                          print('왜 안되냐');
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQrPage(lecture: lecture)));
-                        }: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage()));
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AttendanceWhichWeek(lecture: isProfessor? lecture! : null, lectureStudent: isProfessor? null : lectureStudent, isProfessor: isProfessor)));
                         },
                         child: isProfessor? Text("출석시작", style: mediumWhite14) : Text("출석하기", style: mediumWhite14),
                         style: TextButton.styleFrom(
@@ -49,9 +49,9 @@ class LectureTile extends StatelessWidget {
                     ElevatedButton(
                         onPressed: () {
                           if(isProfessor){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>AttendacneHistoryProfessorPage(week: 10, lecture: lecture)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>HistoryWhichWeek(lecture: lecture!)));
                           }else{
-                            print('dfjdijfiejfe');
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AttendanceHistoryStudentPage(lecture: lectureStudent!)));
                           }
                         },
                         child: Text("출석기록", style: mediumBlue14),

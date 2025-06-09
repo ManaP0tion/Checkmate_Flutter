@@ -5,6 +5,10 @@ import 'package:pp/pages/start_page.dart';
 import 'package:pp/models/user.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:pp/customWidgets/custom_alert_dialog_confirm.dart';
+import 'package:pp/themes/strings.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _passwordCheckController = TextEditingController();
   final _majorController = TextEditingController();
-  String _selectedUserType = '학생';
+  String _selectedUserType = '';
 
   @override
   void dispose(){
@@ -29,6 +33,45 @@ class _RegisterPageState extends State<RegisterPage> {
     _passwordCheckController.dispose();
     _majorController.dispose();
     super.dispose();
+  }
+
+  void register() async {
+    if(_nameController.text.isEmpty || _idController.text.isEmpty || _passwordController.text.isEmpty || _passwordCheckController.text.isEmpty || _majorController.text.isEmpty || _selectedUserType==null){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content : Text('모든 항목을 입력해주세요', style: mediumBlack13))
+      );
+      return;
+    }
+    if(_passwordController.text != _passwordCheckController.text){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content : Text('비밀번호가 일치하지 않습니다.', style: mediumBlack13))
+      );
+      return;
+    }
+    String userType = _selectedUserType == '학생' ? 'student' : 'professor';
+    final url = Uri.parse('http://10.0.2.2:8000/register');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type' : 'application/json'},
+      body: jsonEncode({
+        'username' : _idController.text,
+        'password' : _passwordController.text,
+        'name' : _nameController.text,
+        'student_id' : _idController.text,
+        'major' : _majorController.text,
+        'user_type' : userType
+      })
+    );
+
+    if(response.statusCode == 201){
+      await showDialog(context: context, builder: (BuildContext context) => CustomAlertDialogConfirm(title: register_dialog_title, subtitle: register_dialog_subtitle), barrierDismissible: false);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StartPage()));
+    } else {
+      final error = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content : Text('회원가입 실패 : ${error.toString()}', style: mediumBlack13))
+      );
+    }
   }
 
   @override
@@ -144,16 +187,17 @@ class _RegisterPageState extends State<RegisterPage> {
         child: SizedBox(
           height: 42.h,
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               User(
                 name: _nameController.text,
                 userType: _selectedUserType,
                 major: _majorController.text,
                 studentId: _idController.text
               );
-              Navigator.push(
-                context, MaterialPageRoute(builder: (context) => StartPage())
-              );
+              register();
+              //테스트용
+              //await showDialog(context: context, builder: (BuildContext context) => CustomAlertDialogConfirm(title: register_dialog_title, subtitle: register_dialog_subtitle), barrierDismissible: false);
+              //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StartPage()));
             },
             style: btnBlueRound15,
             child: Text("회원가입", style: mediumWhite16),
