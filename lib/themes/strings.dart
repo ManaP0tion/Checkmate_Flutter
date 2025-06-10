@@ -6,3 +6,7 @@ const String session_end_title = '출석 세션이 종료되었습니다';
 const String session_end_subtitle = '홈 화면으로 이동합니다';
 
 const String ipHome = '192.168.0.2:8000';
+//192.168.137.221
+//192.168.0.2
+//192.168.235.73
+//172.30.64.89

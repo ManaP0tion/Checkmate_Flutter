@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pp/pages/scan_ble_page.dart';
+import 'package:pp/pages/scan_qr_page.dart';
 import 'package:pp/themes/strings.dart';
 import 'package:pp/themes/styles.dart';
 import 'package:pp/themes/colors.dart';
@@ -80,7 +81,7 @@ class WeekListItem extends StatelessWidget {
           if(isProfessor){
             Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQrPage(lecture: lecture!, week: week)));
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage(lecture: lectureStudent!, week: week, lectureCode: 'CS101')));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ScanBlePage(lecture: lectureStudent!, week: week)));
           }
 
         },

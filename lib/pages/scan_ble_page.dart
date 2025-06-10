@@ -221,11 +221,11 @@ class _ScanBlePageState extends State<ScanBlePage> {
 // ... (import는 동일)
 
 class ScanBlePage extends StatefulWidget {
-  final String lectureCode;
+  final String? lectureCode;
   final LectureStudent lecture;
   final int week;
 
-  const ScanBlePage({super.key, required this.lectureCode, required this.lecture, required this.week});
+  const ScanBlePage({super.key, this.lectureCode, required this.lecture, required this.week});
 
   @override
   State<ScanBlePage> createState() => _ScanBlePageState();
@@ -290,6 +290,7 @@ class _ScanBlePageState extends State<ScanBlePage> {
       await FlutterBluePlus.stopScan();
       FlutterBluePlus.startScan(timeout: const Duration(seconds: 1000));
       print('스캔 중~~~~');
+      print('${widget.lecture.lectureCode}  ${widget.week}');
 
       FlutterBluePlus.scanResults.listen((results) async {
         if (_submitted) return;
@@ -302,12 +303,15 @@ class _ScanBlePageState extends State<ScanBlePage> {
           final parsed = _parseSessionId(name);
           if (parsed == null) continue;
 
-
+          print('파싱 성공');
           final scannedLectureCode = parsed['lectureCode'];
           final scannedWeek = int.tryParse(parsed['week'] ?? '');
+          print('저장성공!');
 
           if (scannedLectureCode == widget.lecture.lectureCode && scannedWeek == widget.week) {
             print('찾았다!!!!');
+            print(_sessionIdBle);
+            print(_studentId);
             _sessionIdBle = name;
             _submitted = true;
             await submitBle();
@@ -317,6 +321,9 @@ class _ScanBlePageState extends State<ScanBlePage> {
       });
     } catch (e) {
       print('[BLE] 스캔 에러: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('스캔 실패 $e', style: mediumWhite14)),
+      );
     }
   }
 
@@ -325,8 +332,8 @@ class _ScanBlePageState extends State<ScanBlePage> {
 
     final payload = {
       'student_id': _studentId,
-      'lecture_code': widget.lectureCode,
-      'session_id': _sessionIdBle
+      'lecture_code': widget.lecture.lectureCode,
+      'session_code': _sessionIdBle
     };
 
     final response = await http.post(
@@ -341,7 +348,7 @@ class _ScanBlePageState extends State<ScanBlePage> {
     if (!mounted) return;
 
     if (response.statusCode == 200) {
-      Navigator.pop(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => QrScanPage(lecture: widget.lecture, week: widget.week, sessionIdBle: _sessionIdBle!)));
     } else {
       String errorMsg;
       if (response.statusCode == 404) {

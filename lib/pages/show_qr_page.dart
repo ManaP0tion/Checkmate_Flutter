@@ -26,6 +26,7 @@ class _ShowQrPageState extends State<ShowQrPage> {
   String? _token;
   Uint8List? qrImage;
   int? sessionId;
+  bool _isLoading = true;
 
 
   @override
@@ -68,6 +69,7 @@ class _ShowQrPageState extends State<ShowQrPage> {
 
       final data = jsonDecode(response.body);
       sessionId = data['id'];
+      fetchQrCode();
 
     } else if (response.statusCode == 207){
       print('라즈베리파이 연결 실패');
@@ -77,6 +79,26 @@ class _ShowQrPageState extends State<ShowQrPage> {
       print(sessionId);
     } else {
       print('세션 연결 실패');
+    }
+  }
+
+  Future<void> fetchQrCode() async{
+    const String baseUrl = 'http://${ipHome}/api/attendance/qr/image';
+    final uri = Uri.parse(baseUrl).replace(queryParameters: {'session_code' : '${widget.lecture.code}_${widget.week}'});
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization' : 'Bearer $_token',
+        'Content-Type' : 'application/json'
+      }
+    );
+
+    if(response.statusCode == 200){
+      qrImage = response.bodyBytes;
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -119,15 +141,15 @@ class _ShowQrPageState extends State<ShowQrPage> {
                 width: 200.w,
                 height: 200.h,
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
-                child: Shimmer.fromColors(
-                  baseColor: Colors.grey.shade300,
-                  highlightColor: Colors.grey.shade100,
-                  child: Container(
-                    width: 200.w,
-                    height: 200.h,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0), color: Colors.grey.shade300),
-                  )
-                ),
+                child: _isLoading ? Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      width: 200.w,
+                      height: 200.h,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0), color: Colors.grey.shade300),
+                    )
+                ) : Image.memory(qrImage!),
               ),
               SizedBox(height: 12.h),
               Text("${widget.lecture.name} ${widget.week}주차", style: boldBlack16)

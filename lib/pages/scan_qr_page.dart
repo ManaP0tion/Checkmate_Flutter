@@ -26,6 +26,7 @@ class _QrScanPageState extends State<QrScanPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   String? qrText; // qr 스캔 결과
+  String? sessionCode;
   String? _token;
 
   Future<String?> getToken() async {
@@ -50,10 +51,14 @@ class _QrScanPageState extends State<QrScanPage> {
     initTokenAndQrScan().then((_) {
       controller.scannedDataStream.listen((scanData) {
         qrText = scanData.code;
-        print(qrText);
+
+        Uri uri = Uri.parse(qrText!);
+        sessionCode = uri.queryParameters['session_code'];
+
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@${sessionCode}');
         controller.pauseCamera();
 
-        if(qrText == widget.sessionIdBle){
+        if(sessionCode == widget.sessionIdBle){
           print('판단 성공');
           submitQr();
         } else {
@@ -105,7 +110,9 @@ class _QrScanPageState extends State<QrScanPage> {
       await showDialog(context: context, builder: (BuildContext context) => CustomAlertDialogConfirm(title: attendance_dialog_title, subtitle: attendance_dialog_subtitle), barrierDismissible: false);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
     } else {
-      print('실패');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content : Text('출석 정보 저장 실패', style: mediumWhite14))
+      );
     }
   }
 
